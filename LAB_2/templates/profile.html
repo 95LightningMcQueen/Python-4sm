@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="background: #2e86de; padding: 20px; border-radius: 10px; color: white;">
+    <div style="background: #10ac84; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+        <h2 style="margin: 0;">👤 {{ profile[1] if profile[1] else profile[0] }}</h2>
+    </div>
+    <div style="display: flex; align-items: stretch;">
+        <div style="flex: 2; display: flex; flex-direction: column;">
+            <div class="box" style="color: black;">
+                <b>Краткое инфо:</b><br>
+                <div style="margin-top: 5px;">{{ profile[2] if profile[2] else '' }}</div>
+            </div>
+            <div class="box" style="color: black; flex: 1;">
+                <b>Развернутая информация:</b><br>
+                <div style="margin-top: 5px; white-space: pre-wrap;">{{ profile[3] if profile[3] else '' }}</div>
+            </div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column;">
+            <div class="box" style="color: black; flex: 1;">
+                <b>Список проектов:</b><br>
+                <div style="margin-top: 5px; white-space: pre-wrap;">{{ profile[4] if profile[4] else '' }}</div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

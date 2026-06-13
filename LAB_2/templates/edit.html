@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="POST">
+    <div style="background: #2e86de; padding: 20px; border-radius: 10px; color: white;">
+        <div style="background: #10ac84; padding: 10px; margin-bottom: 10px; display:flex; align-items:center;">
+            <h2 style="margin: 0;">👤 ФИО: <input type="text" name="full_name" value="{{ profile[1] if profile[1] else '' }}" style="padding: 5px;"></h2>
+            <button type="submit" style="margin-left: auto; padding: 10px; cursor: pointer;">Сохранить изменения</button>
+        </div>
+        <div style="display: flex; align-items: stretch;">
+            <div style="flex: 1; display:flex; flex-direction:column;">
+                <div class="box" style="color: black; text-align:center; flex: 1; display: flex; align-items: center; justify-content: center;">
+                    Личная<br>информация
+                </div>
+                <div class="box" style="color: black; text-align:center; flex: 1; display: flex; align-items: center; justify-content: center;">
+                    Работа с<br>учетной записью
+                </div>
+            </div>
+            <div style="flex: 3; display:flex;">
+                <div style="flex: 2; display: flex; flex-direction: column;">
+                    <div class="box" style="color: black;">
+                        <b>Краткое инфо:</b><br>
+                        <textarea name="short_info" style="width: 100%; box-sizing: border-box; margin-top: 5px;">{{ profile[2] if profile[2] else '' }}</textarea>
+                    </div>
+                    <div class="box" style="color: black; flex: 1; display: flex; flex-direction: column;">
+                        <b>Развернутая информация:</b>
+                        <textarea name="detailed_info" style="width: 100%; flex: 1; margin-top: 5px; box-sizing: border-box; resize: none;">{{ profile[3] if profile[3] else '' }}</textarea>
+                    </div>
+                </div>
+                <div style="flex: 1; display: flex;">
+                    <div class="box" style="color: black; flex: 1; display: flex; flex-direction: column;">
+                        <b>Список проектов:</b>
+                        <textarea name="projects" style="width: 100%; flex: 1; margin-top: 5px; box-sizing: border-box; resize: none;">{{ profile[4] if profile[4] else '' }}</textarea>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</form>
+{% endblock %}

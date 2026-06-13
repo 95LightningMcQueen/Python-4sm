@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Все пользователи</h2>
+<div style="display: flex; flex-wrap: wrap;">
+    {% for p in profiles %}
+    <div class="box" style="width: 300px;">
+        <h3>{{ p[1] if p[1] else p[0] }}</h3>
+        <p><i>{{ p[2] if p[2] else "Нет краткого инфо" }}</i></p>
+        <a href="/profile/{{ p[0] }}">Посмотреть портфолио</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
