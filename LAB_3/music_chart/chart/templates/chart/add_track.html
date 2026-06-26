@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление трека</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #1a1a24; --accent: #d49a4e; --text-main: #ffffff; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-main); }
+        .form-container { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 40px; max-width: 500px; margin: 50px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
+        input, textarea, select { width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; font-family: 'Poppins', sans-serif;}
+        input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(212, 154, 78, 0.3);}
+        .btn { background: var(--accent); color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.3s; font-size: 1.1em;}
+        .btn:hover { background: #b8823b; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #a0a0b0; text-decoration: none; }
+        .back-link:hover { color: var(--text-main); }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 style="text-align: center; color: var(--accent);">Добавление трека</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">Сохранить в чарт</button>
+        </form>
+        <a href="{% url 'index' %}" class="back-link">Вернуться на главную</a>
+    </div>
+</body>
+</html>

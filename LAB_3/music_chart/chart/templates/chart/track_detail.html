@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ track.title }} - Детали</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        :root {
+            --bg-color: #1a1a24;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent: #d49a4e;
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+        }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; }
+        .back-link { max-width: 800px; margin: 0 auto 20px auto; display: block; color: var(--text-muted); text-decoration: none; transition: 0.3s; }
+        .back-link:hover { color: var(--accent); transform: translateX(-5px); }
+        
+        .detail-card {
+            background: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color); border-radius: 20px; padding: 40px;
+            max-width: 800px; margin: 0 auto; box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        .top-section { display: flex; justify-content: space-between; gap: 30px; }
+        .left-col { flex: 1; display: flex; flex-direction: column;}
+        .top-left-content { display: flex; align-items: flex-start; margin-bottom: 30px; }
+        .circle { min-width: 120px; height: 120px; background: linear-gradient(135deg, #c98246, #e6b981); border-radius: 50%; margin-right: 30px; box-shadow: 0 0 20px rgba(201, 130, 70, 0.5);}
+        .right-col { text-align: right; min-width: 250px; }
+        
+        h3 { margin: 0 0 10px 0; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 1em;}
+        .artist-info { color: var(--text-muted); font-size: 0.9em; line-height: 1.6; }
+        .lyrics-box { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px; font-size: 0.9em; line-height: 1.8; color: #ccc; white-space: pre-line; max-height: 400px; overflow-y: auto;}
+        .rating-area { display: flex; flex-direction: row-reverse; justify-content: flex-end; margin-top: 15px; }
+        .rating-area input { display: none; }
+        .rating-area label { color: #444; font-size: 2em; cursor: pointer; text-shadow: 0 0 5px rgba(0,0,0,0.5); transition: 0.2s;}
+        .rating-area label:hover, .rating-area label:hover ~ label, .rating-area input:checked ~ label { color: var(--accent); text-shadow: 0 0 15px var(--accent); }
+        .static-stars { color: var(--accent); font-size: 1.5em; letter-spacing: 2px; text-shadow: 0 0 10px rgba(212, 154, 78, 0.6);}
+        
+        .right-stats { color: var(--text-muted); line-height: 1.8; margin-top: 15px;}
+        .highlight { color: var(--text-main); font-weight: 600; font-size: 1.1em;}
+        .vote-section { margin-top: 30px; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; border: 1px solid var(--border-color);}
+    </style>
+</head>
+<body>
+    <a href="{% url 'index' %}" class="back-link">← Назад к чарту</a>
+    
+    <div class="detail-card">
+        <div class="top-section">
+            <div class="left-col">
+                <div class="top-left-content">
+                    {% if track.cover %}
+                        <img src="{{ track.cover.url }}" class="circle" style="object-fit: cover;">
+                    {% else %}
+                        <div class="circle"></div>
+                    {% endif %}
+                    
+                    <div>
+                        <h3>Информация об Исполнителе</h3>
+                        <div class="artist-info">{{ track.artist_info }}</div>
+                    </div>
+                </div>
+                <h3>Текст песни</h3>
+                <div class="lyrics-box">{{ track.lyrics }}</div>
+            </div>
+            
+            <div class="right-col">
+                <div id="display-stars" class="static-stars"></div>
+                <div style="font-size: 1.5em; font-weight: 700; margin: 10px 0;">{{ track.artist }}</div>
+                <div style="font-size: 1.2em; margin-bottom: 5px;">{{ track.title }}</div>
+                <div style="color: var(--accent); margin-bottom: 15px;">{{ track.genre }}</div>
+                
+                <div class="right-stats">
+                    <span id="rating-val" class="highlight">Рейтинг: {{ track.get_rating }}/10</span><br>
+                    Год выпуска: {{ track.release_year }}<br>
+                    <span id="votes-val">Голосов: {{ track.get_votes_count }}</span>
+                </div>
+
+                <div class="vote-section" id="vote-container">
+                    {% if user.is_authenticated %}
+                        {% if not user_voted %}
+                            <h3 style="text-align: left; margin-bottom: 5px;">Оцените трек:</h3>
+                            <form id="vote-form">
+                                {% csrf_token %}
+                                <div class="rating-area">
+                                    <input type="radio" id="star-10" name="score" value="10"><label for="star-10">★</label>
+                                    <input type="radio" id="star-9" name="score" value="9"><label for="star-9">★</label>
+                                    <input type="radio" id="star-8" name="score" value="8"><label for="star-8">★</label>
+                                    <input type="radio" id="star-7" name="score" value="7"><label for="star-7">★</label>
+                                    <input type="radio" id="star-6" name="score" value="6"><label for="star-6">★</label>
+                                    <input type="radio" id="star-5" name="score" value="5"><label for="star-5">★</label>
+                                    <input type="radio" id="star-4" name="score" value="4"><label for="star-4">★</label>
+                                    <input type="radio" id="star-3" name="score" value="3"><label for="star-3">★</label>
+                                    <input type="radio" id="star-2" name="score" value="2"><label for="star-2">★</label>
+                                    <input type="radio" id="star-1" name="score" value="1"><label for="star-1">★</label>
+                                </div>
+                            </form>
+                        {% else %}
+                            <p style="color: #66bb6a; font-weight: 600;">✓ Вы уже оценили этот трек</p>
+                        {% endif %}
+                    {% else %}
+                        <p style="font-size: 0.9em;"><i>Голосовать может только авторизованный пользователь.</i></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        function renderStars(rating) {
+            const filledNum = Math.round(rating);
+            const emptyNum = 10 - filledNum;
+            return '★'.repeat(filledNum) + '<span style="color: rgba(255,255,255,0.15);">' + '★'.repeat(emptyNum) + '</span>';
+        }
+        const initialRating = parseFloat("{{ track.get_rating }}".replace(',', '.'));
+        document.getElementById('display-stars').innerHTML = renderStars(initialRating);
+        const ratingInputs = document.querySelectorAll('.rating-area input');
+        ratingInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const score = this.value;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const formData = new FormData();
+                formData.append('score', score);
+                fetch("{% url 'vote' track.id %}", {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        document.getElementById('rating-val').innerText = `Рейтинг: ${data.new_rating}/10`;
+                        document.getElementById('votes-val').innerText = `Голосов: ${data.votes}`;
+                        document.getElementById('vote-container').innerHTML = '<p style="color: #66bb6a; font-weight: 600;">✓ Ваш голос успешно учтен!</p>';
+                        document.getElementById('display-stars').innerHTML = renderStars(data.new_rating);
+                        
+                        Toastify({
+                            text: "Голос принят! Спасибо.", duration: 3000, close: true, gravity: "top", position: "right",
+                            style: { background: "linear-gradient(to right, #00b09b, #96c93d)", borderRadius: "10px"}
+                        }).showToast();
+                    } else {
+                        Toastify({
+                            text: "Ошибка: " + data.message, duration: 3000,
+                            style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)", borderRadius: "10px"}
+                        }).showToast();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
